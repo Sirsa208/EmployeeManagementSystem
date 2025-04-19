@@ -1,0 +1,82 @@
+CREATE DATABASE EmployeeManagementSystem;
+USE EmployeeManagementSystem;
+CREATE TABLE Department (
+    DeptID INT PRIMARY KEY AUTO_INCREMENT,
+    DeptName VARCHAR(100) NOT NULL
+);
+CREATE TABLE Role (
+    RoleID INT PRIMARY KEY AUTO_INCREMENT,
+    RoleName VARCHAR(100) NOT NULL
+);
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100) UNIQUE,
+    Phone VARCHAR(15),
+    HireDate DATE,
+    Salary DECIMAL(10, 2),
+    DeptID INT,
+    RoleID INT,
+    FOREIGN KEY (DeptID) REFERENCES Department(DeptID),
+    FOREIGN KEY (RoleID) REFERENCES Role(RoleID)
+);
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY AUTO_INCREMENT,
+    EmpID INT,
+    Date DATE,
+    Status ENUM('Present', 'Absent', 'Leave'),
+    FOREIGN KEY (EmpID) REFERENCES Employee(EmpID)
+);
+  CREATE TABLE Payroll (
+    PayrollID INT PRIMARY KEY AUTO_INCREMENT,
+    EmpID INT,
+    PayDate DATE,
+    BasicSalary DECIMAL(10, 2),
+    Bonus DECIMAL(10, 2),
+    Deductions DECIMAL(10, 2),
+    NetPay DECIMAL(10, 2),
+    FOREIGN KEY (EmpID) REFERENCES Employee(EmpID)
+);
+INSERT INTO Department (DeptName) VALUES 
+('Human Resources'), 
+('Finance'), 
+('Engineering'), 
+('Sales');
+INSERT INTO Role (RoleName) VALUES 
+('HR Manager'), 
+('Accountant'), 
+('Software Engineer'), 
+('Sales Executive');
+INSERT INTO Employee (FirstName, LastName, Email, Phone, HireDate, Salary, DeptID, RoleID)
+VALUES 
+('Amit', 'Sharma', 'amit@example.com', '9999888877', '2021-06-15', 50000, 1, 1),
+('Priya', 'Mehta', 'priya@example.com', '8888777766', '2022-03-22', 60000, 3, 3),
+('Rahul', 'Verma', 'rahul@example.com', '7777666655', '2023-01-10', 45000, 2, 2);
+INSERT INTO Attendance (EmpID, Date, Status)
+VALUES 
+(1, '2025-04-01', 'Present'),
+(2, '2025-04-01', 'Leave'),
+(3, '2025-04-01', 'Present');
+INSERT INTO Payroll (EmpID, PayDate, BasicSalary, Bonus, Deductions, NetPay)
+VALUES 
+(1, '2025-03-31', 50000, 2000, 500, 51500),
+(2, '2025-03-31', 60000, 3000, 1000, 62000),
+(3, '2025-03-31', 45000, 1500, 300, 46200);
+SELECT 
+    E.EmpID, E.FirstName, E.LastName, E.Email, D.DeptName, R.RoleName
+FROM 
+    Employee E
+JOIN Department D ON E.DeptID = D.DeptID
+JOIN Role R ON E.RoleID = R.RoleID;
+SELECT 
+    E.FirstName, E.LastName, A.Date, A.Status
+FROM 
+    Attendance A
+JOIN Employee E ON A.EmpID = E.EmpID
+ORDER BY A.Date DESC;
+SELECT 
+    E.FirstName, E.LastName, P.PayDate, P.BasicSalary, P.Bonus, P.Deductions, P.NetPay
+FROM 
+    Payroll P
+JOIN Employee E ON P.EmpID = E.EmpID;
